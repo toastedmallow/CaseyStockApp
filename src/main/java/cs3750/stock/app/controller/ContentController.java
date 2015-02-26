@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,4 +42,10 @@ public class ContentController {
 		Stock stock = (Stock) jdbc.query("select * from STOCKS where stck_id = "+stockId, data, new BeanPropertyRowMapper(Stock.class) ); 
 		return stock;
 	}
+
+    @RequestMapping("/")
+    public String getHomepage(Model m){
+        m.addAttribute("title", "Stock App");
+        return "home";
+    }
 }
