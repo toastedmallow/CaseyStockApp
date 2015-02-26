@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import cs3750.stock.app.model.Stock;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class ContentController {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
+	
+	@RequestMapping("/")
+	public String home(Map<String, Object> model){
+		model.put("time", new Date());
+		model.put("message", "Hello JSP");
+		return "home";
+	}
 	
 	@RequestMapping("/getAllStocks")
 	public @ResponseBody Object getAllStocks(){
