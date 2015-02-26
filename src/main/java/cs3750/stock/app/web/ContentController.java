@@ -21,6 +21,8 @@ public class ContentController {
 	public @ResponseBody Object getSomeData(){
 		Map<String, Object> data = new HashMap<>();
 		data.put("STCK_ID", 1);
+		data.put("STCK_SYMBL", 2);
+		data.put("STCK_PRICE", 3);
 		
 		List<Stock> stocks = jdbc.query("select * from STOCKS", data, new BeanPropertyRowMapper(Stock.class) ); 
 		return stocks;
@@ -41,23 +43,23 @@ public class ContentController {
 		private String stck_symbl;
 		private double stck_price;
 		
+		public Integer getStck_id() {
+			return stck_id;
+		}
+		public void setStck_id(Integer stck_id) {
+			this.stck_id = stck_id;
+		}
+		public String getStck_symbl() {
+			return stck_symbl;
+		}
+		public void setStck_symbl(String stck_symbl) {
+			this.stck_symbl = stck_symbl;
+		}
 		public double getStck_price() {
 			return stck_price;
 		}
-		public void setStck_price(Double stck_price) {
+		public void setStck_price(double stck_price) {
 			this.stck_price = stck_price;
-		}
-		public Integer getId() {
-			return stck_id;
-		}
-		public void setId(Integer stck_id) {
-			this.stck_id = stck_id;
-		}
-		public String getCompany() {
-			return stck_symbl;
-		}
-		public void setCompany(String stck_symbl) {
-			this.stck_symbl = stck_symbl;
 		}
 	}
 	
