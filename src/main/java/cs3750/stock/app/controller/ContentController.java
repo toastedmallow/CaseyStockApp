@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import cs3750.stock.app.model.Stock;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class ContentController {
     @RequestMapping("/")
     public String getHomepage(Model m){
         m.addAttribute("title", "Stock App");
+        m.addAttribute("someList", Arrays.asList("String1", "string2"));
         return "home";
     }
 	
