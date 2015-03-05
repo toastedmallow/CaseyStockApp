@@ -5,10 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
 
-@SpringBootApplication(exclude={
-//	DataSourceAutoConfiguration.class, 
-	SecurityAutoConfiguration.class
-})
+@SpringBootApplication
 public class StockAppApplication {
 
     public static void main(String[] args) {
