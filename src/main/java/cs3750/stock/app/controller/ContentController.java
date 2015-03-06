@@ -27,12 +27,12 @@ public class ContentController {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
 
-    @RequestMapping("/")
-    public String getHomepage(Model m){
-        m.addAttribute("title", "Stock App");
-        m.addAttribute("someList", Arrays.asList("String1", "string2"));
-        return "home";
-    }
+//    @RequestMapping("/")
+//    public String getHomepage(Model m){
+//        m.addAttribute("title", "Stock App");
+//        m.addAttribute("someList", Arrays.asList("String1", "string2"));
+//        return "home";
+//    }
 	
     @RequestMapping("/login")
     public String getLogin(Model m){

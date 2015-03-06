@@ -32,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
             .loginProcessingUrl("/doLogin")
             .usernameParameter("username")
             .passwordParameter("password")
-            .defaultSuccessUrl("/getAllStocks")
+            .defaultSuccessUrl("/viewstocks")
             .permitAll()
             .and()
         .logout()
