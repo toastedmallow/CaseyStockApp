@@ -82,7 +82,7 @@ public class ContentController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/insertStocks")
 	public @ResponseBody Object insertStocks(String symbol, double price){
-		String sql = "insert into transactions (TRANS_ID, USER_ID, STCK_ID, STCK_QNTY) values (:TRANS_ID, :USER_ID, :STCK_ID, :STCK_QNTY)";
+		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_ID", null);
