@@ -65,6 +65,84 @@ public class ContentController {
 		return "test";
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/insertTransaction")
+	public @ResponseBody Object insertTransaction(String stockId, Integer userId, Integer stockQnty){
+		String sql = "insert into stocks (TRANS_ID, STCK_ID, USER_ID, STCK_QNTY) values (:TRANS_ID, :STCK_ID, :USER_ID, :STCK_QNTY)";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("TRANS_ID",  null);
+		data.put("STCK_ID", stockId);
+		data.put("USER_ID", userId);
+		data.put("STCK_QNTY", stockQnty);
+		jdbc.update(sql, data);
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/insertStocks")
+	public @ResponseBody Object insertStocks(String symbol, double price){
+		String sql = "insert into transactions (TRANS_ID, USER_ID, STCK_ID, STCK_QNTY) values (:TRANS_ID, :USER_ID, :STCK_ID, :STCK_QNTY)";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("STCK_ID", null);
+		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_PRICE", price);
+		jdbc.update(sql, data);
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/insertUser")
+	public @ResponseBody Object insertUser(String firstName, String lastName, double balance){
+		String sql = "update stocks (USER_ID, FIRST_NAME, LAST_NAME, BALANCE) values (:USER_ID, :FIRST_NAME, :LAST_NAME, :BALANCE)";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("USER_ID", null);
+		data.put("FIRST_NAME", firstName);
+		data.put("LAST_NAME", lastName);
+		data.put("BALANCE", balance);
+		jdbc.update(sql, data);
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/updateStocks")
+	public @ResponseBody Object updateStockPrice(Integer stckId, double price){
+		String sql = "update stocks set STCK_PRICE = :STCK_PRICE where STCK_ID = :STCK_ID";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("STCK_PRICE", price);
+		data.put("STCK_ID", stckId);
+		jdbc.update(sql, data);
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/updateUser")
+	public @ResponseBody Object updateStockQnty(Integer transId, Integer stockQnty){
+		String sql = "update stocks set STCK_QNTY = :STCK_QNTY where TRANS_ID = :TRANS_ID";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("STCK_QNTY", stockQnty);
+		data.put("TRANS_ID", transId);
+		jdbc.update(sql, data);
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/updateTransaction")
+	public @ResponseBody Object updateBalance(Integer userId, double balance){
+		String sql = "update stocks set BALANCE = :BALANCE where USER_ID = :USER_ID";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("BALANCE", balance);
+		data.put("USER_ID", userId);
+		jdbc.update(sql, data);
+		return true;
+	}
+
+	
 	public static class LoginBean{
 		private String username, password;
 
