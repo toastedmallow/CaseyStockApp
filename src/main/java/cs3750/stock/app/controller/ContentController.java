@@ -88,13 +88,14 @@ public class ContentController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/insertStocks")
-	public @ResponseBody Object insertStocks(String symbol, double price){
+	public @ResponseBody Object insertStocks(String symbol){
+		MyYapi stockInsert = new MyYapi(symbol);
 		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_ID", null);
 		data.put("STCK_SYMBL", symbol);
-		data.put("STCK_PRICE", price);
+		data.put("STCK_PRICE", stockInsert.getPrice());
 		jdbc.update(sql, data);
 		return true;
 	}
@@ -115,12 +116,13 @@ public class ContentController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/updateStocks")
-	public @ResponseBody Object updateStockPrice(Integer stckId, double price){
-		String sql = "update stocks set STCK_PRICE = :STCK_PRICE where STCK_ID = :STCK_ID";
+	public @ResponseBody Object updateStockPrice(String symbol){
+		MyYapi stockUpdate = new MyYapi(symbol);
+		String sql = "update stocks set STCK_PRICE = :STCK_PRICE where STCK_SYMBL = :STCK_SYMBL";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
-		data.put("STCK_PRICE", price);
-		data.put("STCK_ID", stckId);
+		data.put("STCK_PRICE", stockUpdate.getPrice());
+		data.put("STCK_SYMBL", symbol);
 		jdbc.update(sql, data);
 		return true;
 	}
