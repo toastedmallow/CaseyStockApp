@@ -11,7 +11,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,7 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cs3750.stock.app.model.MyYapi;
 import cs3750.stock.app.model.Stock;
+import cs3750.stock.app.model.Transaction;
+import cs3750.stock.app.model.User;
 
 @Controller
 public class ContentController {
@@ -46,6 +51,7 @@ public class ContentController {
 		data.put("STCK_SYMBL", 2);
 		data.put("STCK_PRICE", 3);
 		
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<Stock> stocks = jdbc.query("select * from STOCKS", new BeanPropertyRowMapper(Stock.class) ); 
 		return stocks;
 	}
@@ -55,6 +61,7 @@ public class ContentController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("STCK_ID", stockId);
 		
+		@SuppressWarnings("unchecked")
 		List<Stock> stocks = jdbc.query("select * from STOCKS where stck_id = :STCK_ID", data, new BeanPropertyRowMapper(Stock.class) );		
 		return stocks.isEmpty() ? null : stocks.get(0);
 	}
@@ -141,6 +148,48 @@ public class ContentController {
 		jdbc.update(sql, data);
 		return true;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/getStocks")
+	public @ResponseBody Object getStocks(Integer stockId){
+		   String SQL = "SELECT * FROM stocks WHERE STCK_ID = :STCK_ID";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("STCK_ID", Integer.valueOf(stockId));  
+		   Stock stocks = (Stock) jdbc.queryForObject(SQL, namedParameters, new StockMapper());  
+		 return stocks; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/getUser")
+	public @ResponseBody Object getUser(Integer userId){
+		   String SQL = "SELECT * FROM users WHERE USER_ID = :USER_ID";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("USER_ID", Integer.valueOf(userId));  
+		   User user = (User) jdbc.queryForObject(SQL, namedParameters, new UserMapper());  
+		 return user; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/getTransaction")
+	public @ResponseBody Object getTransaction(Integer transId){
+		   String SQL = "SELECT * FROM transactions WHERE TRANS_ID = :TRANS_ID";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("TRANS_ID", Integer.valueOf(transId));  
+		   Transaction transaction = (Transaction) jdbc.queryForObject(SQL, namedParameters, new TransactionMapper()); 
+		 return transaction; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/TestGrab")
+	public @ResponseBody Object TestGrab(){
+		MyYapi test = new MyYapi("TM");
+		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
+		@SuppressWarnings("rawtypes")
+		Map data = new HashMap();
+		data.put("STCK_ID", null);
+		data.put("STCK_SYMBL", test.getSymbol());
+		data.put("STCK_PRICE", test.getPrice());
+		jdbc.update(sql, data);
+		return true;
+	}
+	
 
 	
 	public static class LoginBean{
