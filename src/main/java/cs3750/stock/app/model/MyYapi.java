@@ -97,13 +97,15 @@ public class MyYapi {
 			CSVReader csvReader = new CSVReader(new FileReader(csv));
 			String[] nextLine;
 			while((nextLine = csvReader.readNext()) != null) {
-				this.price = Double.parseDouble(nextLine[2]);
+				this.price = Double.parseDouble(nextLine[1]);
 				this.name = nextLine[3];
 			}
 			csvReader.close();
 		} catch (IOException e) {
 			System.out.println("error in ParseData()");
 			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			System.out.println("Error parsing csv file");
 		}
 	}
 	
@@ -128,13 +130,9 @@ public class MyYapi {
 	
 	
 	public static void main(String args[]) {
-		MyYapi test = new MyYapi("TM");
-		System.out.println(test.getSymbol());
-		System.out.println(test.getPrice());
-		System.out.println(test.getName());
-		test.setSymbol("F");
-		System.out.println(test.getSymbol());
-		System.out.println(test.getPrice());
-		System.out.println(test.getName());
+		MyYapi MyYapitest = new MyYapi("GOOG");
+		System.out.println(MyYapitest.getSymbol());
+		System.out.println(MyYapitest.getPrice());
+		System.out.println(MyYapitest.getName());
 	}
 }
