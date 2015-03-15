@@ -1,13 +1,9 @@
 package cs3750.stock.app.controller;
 
-import java.util.Arrays;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -16,10 +12,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cs3750.stock.app.model.MyYapi;
@@ -31,17 +26,24 @@ import cs3750.stock.app.model.User;
 public class ContentController {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
-
-//    @RequestMapping("/")
-//    public String getHomepage(Model m){
-//        m.addAttribute("title", "Stock App");
-//        m.addAttribute("someList", Arrays.asList("String1", "string2"));
-//        return "home";
-//    }
 	
     @RequestMapping("/login")
     public String getLogin(Model m){
         return "login";
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping("/successfulLogin")
+    public String setupModel(ModelMap model, Principal principal){
+    	String username = principal.getName(); //get logged in username
+        
+        String SQL = "SELECT * FROM users WHERE username = :username";  
+		SqlParameterSource namedParameters = new MapSqlParameterSource("username", String.valueOf(username));
+		User user = (User) jdbc.queryForObject(SQL, namedParameters, new UserMapper()); 
+		System.out.println("Model is setup");
+        
+        model.addAttribute("user", user);
+        return "viewstocks";
     }
     
 	@RequestMapping("/getAllStocks")
@@ -64,12 +66,6 @@ public class ContentController {
 		@SuppressWarnings("unchecked")
 		List<Stock> stocks = jdbc.query("select * from STOCKS where stck_id = :STCK_ID", data, new BeanPropertyRowMapper(Stock.class) );		
 		return stocks.isEmpty() ? null : stocks.get(0);
-	}
-
-	@RequestMapping(value="/dummyPost", method=RequestMethod.POST)
-	public String postDummyData(@ModelAttribute LoginBean bean, HttpServletRequest request, HttpServletResponse response, HttpSession session){
-
-		return "test";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -103,7 +99,7 @@ public class ContentController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/insertUser")
 	public @ResponseBody Object insertUser(String firstName, String lastName, double balance){
-		String sql = "update stocks (USER_ID, FIRST_NAME, LAST_NAME, BALANCE) values (:USER_ID, :FIRST_NAME, :LAST_NAME, :BALANCE)";
+		String sql = "insert into users (USER_ID, FIRST_NAME, LAST_NAME, BALANCE) values (:USER_ID, :FIRST_NAME, :LAST_NAME, :BALANCE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("USER_ID", null);
@@ -190,30 +186,6 @@ public class ContentController {
 		data.put("STCK_PRICE", test.getPrice());
 		jdbc.update(sql, data);
 		return true;
-	}
-	
-
-	
-	public static class LoginBean{
-		private String username, password;
-
-		public String getUsername() {
-			return username;
-		}
-
-		public void setUsername(String username) {
-			this.username = username;
-		}
-
-		public String getPassword() {
-			return password;
-		}
-
-		public void setPassword(String password) {
-			this.password = password;
-		}
-		
-		
 	}
 	
 }

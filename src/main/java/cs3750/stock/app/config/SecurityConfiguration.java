@@ -23,7 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		http
 		// don't secure these routes
         .authorizeRequests()
-            .antMatchers("/", "/home", "/static/**", "/doLogin", "/dummyPost").permitAll()
+            .antMatchers("/", "/home", "/static/**", "/doLogin", "/registration", "/doregistration").permitAll()
             .anyRequest().authenticated()
             .and()
         // use form login
@@ -32,7 +32,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
             .loginProcessingUrl("/doLogin")
             .usernameParameter("username")
             .passwordParameter("password")
-            .defaultSuccessUrl("/viewstocks")
+            .defaultSuccessUrl("/successfulLogin", true)
             .permitAll()
             .and()
         .logout()
@@ -49,13 +49,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//            .inMemoryAuthentication()
-//                .withUser("demo@example.com").password("password").roles("USER");
 		
 		auth.jdbcAuthentication().dataSource(dataSource)
-			.usersByUsernameQuery("select first_name, 'password' as password, true as enabled from stocks.users where first_name=?")
-			.authoritiesByUsernameQuery("select first_name, 'USER' as role from stocks.users where first_name=?");
+			.usersByUsernameQuery("select username, password, true as enabled from stocks.users where username=?")
+			.authoritiesByUsernameQuery("select username, 'USER' as role from stocks.users where username=?");
     }
 
 }

@@ -1,25 +1,48 @@
 package cs3750.stock.app.model;
 
 public class User {
-	private int user_id;
-	private String first_name;
-	private String last_name;
+	private int userId;
+	private String firstName;
+	private String lastName;
 	private double balance;
+	private String username;
 	
-	public int getUser_id() {
-		return user_id;
+	public User(){
+		
 	}
-	public String getFirst_name() {
-		return first_name;
+	
+	public User(String firstName, String lastName, String username, double balance, int userId){
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.username = username;
+		this.balance = balance;
+		this.userId = userId;
 	}
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
+	
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
-	public String getLast_name() {
-		return last_name;
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public int getUserId() {
+		return userId;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public String getLastName() {
+		return lastName;
 	}
 	public double getBalance() {
 		return balance;
@@ -28,5 +51,8 @@ public class User {
 		this.balance = balance;
 	}
 	
+	public String getUsername(){
+		return username;
+	}
 	
 }
