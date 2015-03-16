@@ -27,7 +27,7 @@ public class RegistrationController {
 		
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@RequestMapping(method = RequestMethod.POST)
 	public String processRegistration(@ModelAttribute("registerForm")
 									RegisterUser user, Map<String, Object> model ) {
@@ -43,6 +43,5 @@ public class RegistrationController {
 		jdbc.update(sql, data);
 		
 		return "login";
-		
 	}
 }

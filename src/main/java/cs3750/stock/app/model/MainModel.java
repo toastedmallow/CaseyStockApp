@@ -2,7 +2,7 @@ package cs3750.stock.app.model;
 
 import java.util.List;
 
-public class MainModel {
+public class MainModel implements java.io.Serializable{
 
 	private static User user;
 	private static List<Stock> stockList;

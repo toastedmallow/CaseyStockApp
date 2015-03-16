@@ -21,14 +21,14 @@ public class ViewStocksController {
 	private NamedParameterJdbcTemplate jdbc;
 	  
 	@RequestMapping(value="/viewstocks", method = RequestMethod.GET)
-    public String printWelcome(HttpServletRequest request) {
+    public User printWelcome(HttpServletRequest request) {
     	LOGGER.debug("A Request was made for the View Stocks Prices Page");
     	
     	User user = MainModel.getUser();
     	String result = "First: " + user.getFirstName() + ", Last: " + user.getLastName() + ", Username: " + user.getUsername() + ", User ID: " + user.getUserId();
     	System.out.println(result);
     	
-        return "viewstocks";
+        return user;
    
     }
 }
