@@ -21,6 +21,7 @@ import cs3750.stock.app.model.MyYapi;
 import cs3750.stock.app.model.Stock;
 import cs3750.stock.app.model.Transaction;
 import cs3750.stock.app.model.User;
+import cs3750.stock.app.model.MainModel;
 
 @Controller
 public class ContentController {
@@ -69,8 +70,7 @@ public class ContentController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/insertTransaction")
-	public @ResponseBody Object insertTransaction(String stockId, Integer userId, Integer stockQnty){
+	public void insertTransaction(String stockId, Integer userId, Integer stockQnty){
 		String sql = "insert into stocks (TRANS_ID, STCK_ID, USER_ID, STCK_QNTY) values (:TRANS_ID, :STCK_ID, :USER_ID, :STCK_QNTY)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
@@ -79,21 +79,18 @@ public class ContentController {
 		data.put("USER_ID", userId);
 		data.put("STCK_QNTY", stockQnty);
 		jdbc.update(sql, data);
-		return true;
 	}
 	
+	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/insertStocks")
-	public @ResponseBody Object insertStocks(String symbol){
-		MyYapi stockInsert = new MyYapi(symbol);
+	public void insertStocks(MyYapi stockInsert){
 		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_ID", null);
-		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_SYMBL", stockInsert.getSymbol());
 		data.put("STCK_PRICE", stockInsert.getPrice());
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -111,16 +108,13 @@ public class ContentController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/updateStocks")
-	public @ResponseBody Object updateStockPrice(String symbol){
-		MyYapi stockUpdate = new MyYapi(symbol);
+	public void updateStockPrice(MyYapi stockUpdate){
 		String sql = "update stocks set STCK_PRICE = :STCK_PRICE where STCK_SYMBL = :STCK_SYMBL";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_PRICE", stockUpdate.getPrice());
-		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_SYMBL", stockUpdate.getSymbol());
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -157,6 +151,14 @@ public class ContentController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public Stock getStockIdBySymbol(String symbol){
+		   String SQL = "SELECT * FROM stocks WHERE STCK_SYMBL = :STCK_SYMBL";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("STCK_SYMBL", symbol);  
+		   Stock stocks = (Stock) jdbc.queryForObject(SQL, namedParameters, new StockMapper());  
+		 return stocks; 
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping("/getUser")
 	public @ResponseBody Object getUser(Integer userId){
 		   String SQL = "SELECT * FROM users WHERE USER_ID = :USER_ID";  
@@ -188,69 +190,49 @@ public class ContentController {
 		return true;
 	}
 	
-	public static void invest(double balance, double price1, double price2, double price3) {
-		//amounts invested in each stock
-		double invested1 = 0;
-		double invested2 = 0;
-		double invested3 = 0;
-		//number of stocks
-		double qty1 = 0;
-		double qty2 = 0;
-		double qty3 = 0;
-		//the user's balance split equally between the three stocks
-		double div = 0;
-		//what is left over after purchasing as much of one stock as possible 
-		double mod = 0;
-		//the total of the mod variables from each stock
-		double remainder = 0;
+	public void invest(double balance, String[] symbol) {
+		User user = MainModel.getUser();					//holds current user id
+		MyYapi stock; 					//stock object to fetch price
+		double[] price = {0,0,0};		//prices of each stock
+		double[] invested = {0,0,0};	//amounts invested in each stock
+		double qty[] = {0,0,0};			//number of stocks
+		double div = 0;					//the user's balance split equally between the three stocks
+		double mod = 0;					//what is left over after purchasing as much of one stock as possible 
+		double remainder = 0;			//the total of the mod variables from each stock
 
 		div = balance/3;
 		
 		//STOCK 1
-
-		mod = div % price1;
-		remainder += mod;
-		
-		invested1 = div - mod;
-		qty1 = invested1 / price1;
-		
-		System.out.println("STOCK 1:");
-		System.out.println(invested1);
-		System.out.println(qty1);
-		
-		//STOCK 2
-		
-		mod = div % price2;
-		remainder += mod;
-		
-		invested2 = div - mod;
-		qty2 = invested2 / price2;
-		
-		System.out.println("STOCK 2:");
-		System.out.println(invested2);
-		System.out.println(qty2);
-		
-		//STOCK 3
-		
-		mod = div % price3;
-		remainder += mod;
-		
-		invested3 = div - mod;
-		qty3 = invested3 / price3;
-		
-		System.out.println("STOCK 3:");
-		System.out.println(invested3);
-		System.out.println(qty3);
+		for (int i = 0; i < 3; i++)
+		{
+			stock = new MyYapi(symbol[i]);
+			price[i] = stock.getPrice();
+			
+			mod = div % price[i];
+			remainder += mod;
+			
+			invested[i] = div - mod;
+			qty[i] = invested[i] / price[i];
+			
+			insertStocks(stock);
+			
+			System.out.println(symbol[i]);
+			System.out.println(invested[i]);
+			System.out.println(qty[i]);
+		}
 		
 		//REMAINDER
 		System.out.println("REMAINDER:");
 		System.out.println(remainder);
-		
-		System.out.println(invested1 + invested2 + invested3 + remainder);
 	}
 	
 	public static void main (String[] args) {
-		invest(1000, 2.35, 5.60, 7.0);
+		ContentController control = new ContentController();
+		String[] stocks = {"GOOG","F","AAPL"};
+		control.invest(1000, stocks);
+		
+		MyYapi test = new MyYapi("GOOG");
+		System.out.println(test.getPrice());
 	}
 	
 }

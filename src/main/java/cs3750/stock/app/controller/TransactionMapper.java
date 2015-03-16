@@ -14,6 +14,7 @@ public class TransactionMapper implements RowMapper{
 		transaction.setStck_id(rs.getInt("STCK_ID"));
 		transaction.setUser_id(rs.getInt("USER_ID"));
 		transaction.setStck_qnty(rs.getInt("STCK_QNTY"));
+		transaction.setTrans_id(rs.getInt("TRANS_ID"));
 		return transaction;    
 	} 
 }
