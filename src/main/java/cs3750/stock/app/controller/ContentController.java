@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cs3750.stock.app.model.MainModel;
 import cs3750.stock.app.model.MyYapi;
 import cs3750.stock.app.model.Stock;
 import cs3750.stock.app.model.Transaction;
@@ -27,6 +28,7 @@ public class ContentController {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
 	
+	
     @RequestMapping("/login")
     public String getLogin(Model m){
         return "login";
@@ -34,20 +36,22 @@ public class ContentController {
     
     @SuppressWarnings("unchecked")
     @RequestMapping("/successfulLogin")
-    public String setupModel(ModelMap model, Principal principal){
+    public String setupModel(Principal principal){
     	String username = principal.getName(); //get logged in username
         
         String SQL = "SELECT * FROM users WHERE username = :username";  
 		SqlParameterSource namedParameters = new MapSqlParameterSource("username", String.valueOf(username));
-		User user = (User) jdbc.queryForObject(SQL, namedParameters, new UserMapper()); 
+		User user = (User) jdbc.queryForObject(SQL, namedParameters, new UserMapper());
+
+		MainModel.setUser(user);
+		
 		System.out.println("Model is setup");
-        
-        model.addAttribute("user", user);
+		
         return "viewstocks";
     }
     
 	@RequestMapping("/getAllStocks")
-	public @ResponseBody Object getAllStocks(){
+	public @ResponseBody Object getAllStocks(ModelMap model){
 		Map<String, Object> data = new HashMap<>();
 		data.put("STCK_ID", 1);
 		data.put("STCK_SYMBL", 2);
