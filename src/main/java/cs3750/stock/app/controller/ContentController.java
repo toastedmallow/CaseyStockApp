@@ -38,7 +38,6 @@ public class ContentController {
     @RequestMapping("/successfulLogin")
     public String setupModel(Principal principal){
     	String username = principal.getName(); //get logged in username
-        
         String SQL = "SELECT * FROM users WHERE username = :username";  
 		SqlParameterSource namedParameters = new MapSqlParameterSource("username", String.valueOf(username));
 		User user = (User) jdbc.queryForObject(SQL, namedParameters, new UserMapper());
@@ -67,7 +66,7 @@ public class ContentController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("STCK_ID", stockId);
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		List<Stock> stocks = jdbc.query("select * from STOCKS where stck_id = :STCK_ID", data, new BeanPropertyRowMapper(Stock.class) );		
 		return stocks.isEmpty() ? null : stocks.get(0);
 	}
@@ -88,13 +87,13 @@ public class ContentController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/insertStocks")
-	public @ResponseBody Object insertStocks(String symbol){
-		MyYapi stockInsert = new MyYapi(symbol);
+	public @ResponseBody Object insertStocks(){
+		MyYapi stockInsert = new MyYapi("GOOG");
 		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_ID", null);
-		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_SYMBL", stockInsert.getSymbol());
 		data.put("STCK_PRICE", stockInsert.getPrice());
 		jdbc.update(sql, data);
 		return true;

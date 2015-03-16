@@ -1,6 +1,6 @@
 package cs3750.stock.app.model;
 
-public class User {
+public class User implements java.io.Serializable{
 	private int userId;
 	private String firstName;
 	private String lastName;

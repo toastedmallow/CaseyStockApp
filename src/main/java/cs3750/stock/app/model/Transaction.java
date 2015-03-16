@@ -1,6 +1,6 @@
 package cs3750.stock.app.model;
 
-public class Transaction {
+public class Transaction implements java.io.Serializable{
 	private Integer	trans_id;
 	private Integer stck_id;
 	private Integer user_id;

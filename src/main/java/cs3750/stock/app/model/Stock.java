@@ -1,6 +1,6 @@
 package cs3750.stock.app.model;
 
-public class Stock {
+public class Stock implements java.io.Serializable{
 	private Integer stck_id;
 	private String stck_symbl;
 	private double stck_price;
