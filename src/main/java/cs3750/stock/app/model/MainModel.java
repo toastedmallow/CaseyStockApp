@@ -4,21 +4,26 @@ import java.util.List;
 
 public class MainModel {
 
-	private User user;
-	private List<Stock> stockList;
+	private static User user;
+	private static List<Stock> stockList;
 	
-	public MainModel(User user, List<Stock> stockList){
-		this.user = user;
-		this.stockList = stockList;
+	public MainModel(){
 	}
 
-	public User getUser() {
+	public static void setUser(User user) {
+		MainModel.user = user;
+	}
+
+	public static void setStockList(List<Stock> stockList) {
+		MainModel.stockList = stockList;
+	}
+
+
+	public static User getUser() {
 		return user;
 	}
 
-	public List<Stock> getStockList() {
+	public static List<Stock> getStockList() {
 		return stockList;
 	}
-	
-	
 }
