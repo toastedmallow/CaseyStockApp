@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cs3750.stock.app.model.Intializer;
 import cs3750.stock.app.model.MainModel;
 import cs3750.stock.app.model.MyYapi;
 import cs3750.stock.app.model.Stock;
@@ -28,7 +29,6 @@ public class ContentController {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
 	
-	
     @RequestMapping("/login")
     public String getLogin(Model m){
         return "login";
@@ -36,7 +36,12 @@ public class ContentController {
     
     @SuppressWarnings("unchecked")
     @RequestMapping("/successfulLogin")
-    public String setupModel(Principal principal){
+    public String setupModel(Principal principal, Map<String, Object> model){
+    	String mapping = "intialize";
+    	
+    	//-------------------------------------------------------------
+    	//Put user in session
+    	//-------------------------------------------------------------
     	String username = principal.getName(); //get logged in username
         
         String SQL = "SELECT * FROM users WHERE username = :username";  
@@ -45,9 +50,22 @@ public class ContentController {
 
 		MainModel.setUser(user);
 		
-		System.out.println("Model is setup");
+		//-------------------------------------------------------------
+    	//Determine next page
+    	//-------------------------------------------------------------
+		List<Transaction> transactions = (List<Transaction>) getTransactionByUserId(user.getUserId());
 		
-        return "viewstocks";
+		if(transactions != null && transactions.size() > 0)
+		{
+			mapping = "viewstocks";
+		}
+		else
+		{
+			Intializer intializer = new Intializer();
+			model.put("intializeForm", intializer);
+		}
+		
+        return mapping;
     }
     
 	@RequestMapping("/getAllStocks")
@@ -58,7 +76,7 @@ public class ContentController {
 		data.put("STCK_PRICE", 3);
 		
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		List<Stock> stocks = jdbc.query("select * from STOCKS", new BeanPropertyRowMapper(Stock.class) ); 
+		List<Stock> stocks = jdbc.query("select * from STOCKS", new BeanPropertyRowMapper(Stock.class)); 
 		return stocks;
 	}
 	
@@ -176,6 +194,15 @@ public class ContentController {
 		   SqlParameterSource namedParameters = new MapSqlParameterSource("TRANS_ID", Integer.valueOf(transId));  
 		   Transaction transaction = (Transaction) jdbc.queryForObject(SQL, namedParameters, new TransactionMapper()); 
 		 return transaction; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/getTransactionByUser")
+	public @ResponseBody Object getTransactionByUserId(Integer userId){
+		   String SQL = "SELECT * FROM transactions WHERE USER_ID = :USER_ID";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("USER_ID", Integer.valueOf(userId));  
+		   List<Transaction> transactions = (List<Transaction>) jdbc.query(SQL, namedParameters, new TransactionMapper()); 
+		 return transactions; 
 	}
 	
 	@SuppressWarnings("unchecked")

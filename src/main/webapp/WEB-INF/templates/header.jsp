@@ -61,5 +61,9 @@
 		<td width="25%">
 			<span class="menu"><a style="color:white" href="/Contact">Contact Us</a><span>
 		</td>
+		<!-- Intialize Link -->
+		<td width="25%">
+			<span class="menu"><a style="color:white" href="/intialize">Intialize</a><span>
+		</td>
 	</tr>
 	</table>
