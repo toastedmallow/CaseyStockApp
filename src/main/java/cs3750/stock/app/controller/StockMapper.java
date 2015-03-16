@@ -13,6 +13,7 @@ public class StockMapper implements RowMapper{
 		Stock stocks = new Stock();    
 		stocks.setStck_price(rs.getDouble("STCK_PRICE"));
 		stocks.setStck_symbl(rs.getString("STCK_SYMBL"));
+		stocks.setStck_id(rs.getInt("STCK_ID"));
 		return stocks;    
 	} 
 }

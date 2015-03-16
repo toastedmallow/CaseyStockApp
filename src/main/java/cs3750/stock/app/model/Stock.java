@@ -20,4 +20,7 @@ public class Stock {
 	public void setStck_price(double stck_price) {
 		this.stck_price = stck_price;
 	}
+	public void setStck_id(Integer stck_id) {
+		this.stck_id = stck_id;
+	}
 }

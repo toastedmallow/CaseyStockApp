@@ -1,7 +1,6 @@
 package cs3750.stock.app.model;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -83,10 +82,10 @@ public class MyYapi {
 		this.refresh();
 		try {
 			csv = File.createTempFile("stockapp" + this.symbol, "csv");
-			csv.deleteOnExit();
 			FileWriter csvWriter = new FileWriter(csv);
 			csvWriter.write(yapi.getCsv());
 			csvWriter.close();
+			csv.deleteOnExit();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -97,15 +96,17 @@ public class MyYapi {
 			CSVReader csvReader = new CSVReader(new FileReader(csv));
 			String[] nextLine;
 			while((nextLine = csvReader.readNext()) != null) {
-				this.price = Double.parseDouble(nextLine[1]);
 				this.name = nextLine[3];
+				try {
+					this.price = Double.parseDouble(nextLine[1]);
+				} catch(NumberFormatException e) {
+					System.out.println("hello");
+				}
 			}
 			csvReader.close();
 		} catch (IOException e) {
 			System.out.println("error in ParseData()");
 			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			System.out.println("Error parsing csv file");
 		}
 	}
 	
@@ -130,9 +131,13 @@ public class MyYapi {
 	
 	
 	public static void main(String args[]) {
-		MyYapi MyYapitest = new MyYapi("GOOG");
-		System.out.println(MyYapitest.getSymbol());
-		System.out.println(MyYapitest.getPrice());
-		System.out.println(MyYapitest.getName());
+		MyYapi test = new MyYapi("AAPL");
+		System.out.println(test.getSymbol());
+		System.out.println(test.getPrice());
+		System.out.println(test.getName());
+		//test.setSymbol("APPL");
+		//System.out.println(test.getSymbol());
+		//System.out.println(test.getPrice());
+		//System.out.println(test.getName());
 	}
 }
