@@ -52,30 +52,31 @@ public class ViewStocksController {
 	public String drawBarChart(ModelMap model) {
 		
 		// define the data plots
-		BarChartPlot stock1 = Plots.newBarChartPlot(Data.newData(710.11), Color.GREEN, "GOOG");
-		BarChartPlot stock2 = Plots.newBarChartPlot(Data.newData(300.24), Color.SLATEGRAY, "AAPL");
-		BarChartPlot stock3 = Plots.newBarChartPlot(Data.newData(642.22), Color.BLUE, "MSFT");
-		BarChartPlot leftover = Plots.newBarChartPlot(Data.newData(00.23), Color.RED, "Left Over");
+		BarChartPlot stock1 = Plots.newBarChartPlot(Data.newData(1), Color.GREEN, "GOOG");
+		BarChartPlot stock2 = Plots.newBarChartPlot(Data.newData(4), Color.SLATEGRAY, "AAPL");
+		BarChartPlot stock3 = Plots.newBarChartPlot(Data.newData(3), Color.BLUE, "MSFT");
+		BarChartPlot leftover = Plots.newBarChartPlot(Data.newData(00.23), Color.RED, "Left Over Amount");
 		
 		// init the bar chart
 		BarChart barChart = GCharts.newBarChart(stock1, stock2, stock3, leftover);
 		
 		// Define Axis and other stuffs
 		AxisStyle axisStyle = AxisStyle.newAxisStyle(Color.BLACK, 13, AxisTextAlignment.CENTER);
-		AxisLabels amount = AxisLabelsFactory.newAxisLabels("Amount Invested", 50.0);
+		AxisLabels amount = AxisLabelsFactory.newAxisLabels("Amount of Shares", 50.0);
 		amount.setAxisStyle(axisStyle);
 		AxisLabels ticker = AxisLabelsFactory.newAxisLabels("Ticker Symbol", 50.0);
 		ticker.setAxisStyle(axisStyle);
 		
 		//adding axis info to chart
-		barChart.addXAxisLabels(AxisLabelsFactory.newAxisLabels("GOOG", "AAPL", "MSFT", "Left Over"));
-		barChart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0,1000));
-		barChart.addYAxisLabels(amount);
-		barChart.addXAxisLabels(ticker);
+		//barChart.addYAxisLabels(AxisLabelsFactory.newAxisLabels("GOOG", "AAPL", "MSFT", "Left Over"));
+		barChart.addXAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(0,20));
+		barChart.addXAxisLabels(amount);
+		barChart.addYAxisLabels(ticker);
 		
-		barChart.setSize(700,400);
-		barChart.setBarWidth(100);
+		barChart.setSize(720,360);
+		barChart.setBarWidth(BarChart.AUTO_RESIZE);
 		//barChart.setSpaceBetweenGroupsOfBars(5);
+		barChart.setHorizontal(true);
 		barChart.setTitle("Stock Bar Chart", Color.BLACK, 15);
 		barChart.setBackgroundFill(Fills.newSolidFill(Color.ALICEBLUE));
 		LinearGradientFill fill = Fills.newLinearGradientFill(0, Color.LAVENDER, 100);
