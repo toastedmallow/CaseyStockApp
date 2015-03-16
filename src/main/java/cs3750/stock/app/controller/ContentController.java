@@ -23,6 +23,7 @@ import cs3750.stock.app.model.MyYapi;
 import cs3750.stock.app.model.Stock;
 import cs3750.stock.app.model.Transaction;
 import cs3750.stock.app.model.User;
+import cs3750.stock.app.model.MainModel;
 
 @Controller
 public class ContentController {
@@ -91,8 +92,7 @@ public class ContentController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/insertTransaction")
-	public @ResponseBody Object insertTransaction(String stockId, Integer userId, Integer stockQnty){
+	public void insertTransaction(Integer stockId, Integer userId, Integer stockQnty){
 		String sql = "insert into stocks (TRANS_ID, STCK_ID, USER_ID, STCK_QNTY) values (:TRANS_ID, :STCK_ID, :USER_ID, :STCK_QNTY)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
@@ -101,21 +101,18 @@ public class ContentController {
 		data.put("USER_ID", userId);
 		data.put("STCK_QNTY", stockQnty);
 		jdbc.update(sql, data);
-		return true;
 	}
 	
+	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/insertStocks")
-	public @ResponseBody Object insertStocks(String symbol){
-		MyYapi stockInsert = new MyYapi(symbol);
+	public void insertStocks(MyYapi stockInsert){
 		String sql = "insert into stocks (STCK_ID, STCK_SYMBL, STCK_PRICE) values (:STCK_ID, :STCK_SYMBL, :STCK_PRICE)";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_ID", null);
-		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_SYMBL", stockInsert.getSymbol());
 		data.put("STCK_PRICE", stockInsert.getPrice());
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -133,40 +130,33 @@ public class ContentController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/updateStocks")
-	public @ResponseBody Object updateStockPrice(String symbol){
-		MyYapi stockUpdate = new MyYapi(symbol);
+	public void updateStockPrice(MyYapi stockUpdate){
 		String sql = "update stocks set STCK_PRICE = :STCK_PRICE where STCK_SYMBL = :STCK_SYMBL";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_PRICE", stockUpdate.getPrice());
-		data.put("STCK_SYMBL", symbol);
+		data.put("STCK_SYMBL", stockUpdate.getSymbol());
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/updateUser")
-	public @ResponseBody Object updateStockQnty(Integer transId, Integer stockQnty){
-		String sql = "update stocks set STCK_QNTY = :STCK_QNTY where TRANS_ID = :TRANS_ID";
+	public void updateStockQnty(Integer transId, Integer stockQnty){
+		String sql = "update transactions set STCK_QNTY = :STCK_QNTY where TRANS_ID = :TRANS_ID";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("STCK_QNTY", stockQnty);
 		data.put("TRANS_ID", transId);
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping("/updateTransaction")
-	public @ResponseBody Object updateBalance(Integer userId, double balance){
-		String sql = "update stocks set BALANCE = :BALANCE where USER_ID = :USER_ID";
+	public void updateBalance(Integer userId, double balance){
+		String sql = "update users set BALANCE = :BALANCE where USER_ID = :USER_ID";
 		@SuppressWarnings("rawtypes")
 		Map data = new HashMap();
 		data.put("BALANCE", balance);
 		data.put("USER_ID", userId);
 		jdbc.update(sql, data);
-		return true;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -174,6 +164,14 @@ public class ContentController {
 	public @ResponseBody Object getStocks(Integer stockId){
 		   String SQL = "SELECT * FROM stocks WHERE STCK_ID = :STCK_ID";  
 		   SqlParameterSource namedParameters = new MapSqlParameterSource("STCK_ID", Integer.valueOf(stockId));  
+		   Stock stocks = (Stock) jdbc.queryForObject(SQL, namedParameters, new StockMapper());  
+		 return stocks; 
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Stock getStockBySymbol(String symbol){
+		   String SQL = "SELECT * FROM stocks WHERE STCK_SYMBL = :STCK_SYMBL";  
+		   SqlParameterSource namedParameters = new MapSqlParameterSource("STCK_SYMBL", symbol);  
 		   Stock stocks = (Stock) jdbc.queryForObject(SQL, namedParameters, new StockMapper());  
 		 return stocks; 
 	}
@@ -217,6 +215,80 @@ public class ContentController {
 		data.put("STCK_PRICE", test.getPrice());
 		jdbc.update(sql, data);
 		return true;
+	}
+	
+	public void invest(double balance, String[] symbol) {
+		User user = MainModel.getUser();//holds current user
+		Integer userId = user.getUserId();	//holds current user id
+		Integer[] stockId = {0,0,0};					//holds stock id
+		MyYapi[] stock = {null, null, null}; 					//stock object to fetch price
+		double[] price = {0,0,0};		//prices of each stock
+		double[] invested = {0,0,0};	//amounts invested in each stock
+		Integer[] qty = {0,0,0};			//number of stocks
+		double div = 0;					//the user's balance split equally between the three stocks
+		double mod = 0;					//what is left over after purchasing as much of one stock as possible 
+		double remainder = 0;			//the total of the mod variables from each stock
+
+		div = balance/3;	//split initial balance into 3
+		
+		//STOCK 1
+		for (int i = 0; i < 3; i++)		//invest in the stocks
+		{
+			stock[i] = new MyYapi(symbol[i]);
+			price[i] = stock[i].getPrice();
+			
+			mod = div % price[i];
+			remainder += mod;
+			
+			invested[i] += div - mod;
+			qty[i] += (int)(invested[i] / price[i]);
+			
+			System.out.println(symbol[i]);
+			System.out.println(invested[i]);
+			System.out.println(qty[i]);
+		}
+		
+		for (int i = 0; i < 3; i++)	//loop through the three stocks
+		{
+			if (getStockBySymbol(symbol[i]).getStck_id() == null) {	//if there is no such stock, insert
+				insertStocks(stock[i]);
+			} else {							//else update
+				updateStockPrice(stock[i]);
+			}
+			stockId[i] = getStockBySymbol(symbol[i]).getStck_id();	//get stock Id
+			insertTransaction(stockId[i], userId, qty[i]);			//insert transaction for this stock
+		}
+		
+		boolean enoughLeft = true;
+		while (enoughLeft) {
+			enoughLeft = false;
+			
+			for (int i = 0; i < 3; i++) {
+				if (remainder >= price[i]) //if there is enough left over to invest in a stock, invest and set flag to check again
+				{
+					remainder -= price[i];
+					invested[i] += price[i];
+					qty[i]++;
+					enoughLeft = true;
+				}
+			}
+			
+		}
+		
+		updateBalance(userId, remainder);	//put the final remaining balance that could not be invested into the user table
+		
+		//REMAINDER
+		System.out.println("REMAINDER:");
+		System.out.println(remainder);
+	}
+	
+	public static void main (String[] args) {
+		ContentController control = new ContentController();
+		String[] stocks = {"GOOG","F","AAPL"};
+		control.invest(1000, stocks);
+		
+		MyYapi test = new MyYapi("GOOG");
+		System.out.println(test.getPrice());
 	}
 	
 }
