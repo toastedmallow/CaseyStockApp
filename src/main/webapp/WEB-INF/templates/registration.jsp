@@ -12,7 +12,6 @@
 				<tr>
 					<td colspan="2" align="center"><h2 style="color:white; font-size:16pt">User Registration Form</h2></td>
 				</tr>
-					<!-- Password implementation possibly? -->
 				<tr>
 					<td style="color:white; font-size:14pt" width="25%">First Name:</td>
 					<td><form:input path="firstName" /></td>

@@ -6,7 +6,16 @@ public class MainModel implements java.io.Serializable{
 
 	private static User user;
 	private static List<Stock> stockList;
+	private static String[] stockArray;
 	
+	public static String[] getStockArray() {
+		return stockArray;
+	}
+
+	public static void setStockArray(String[] stockArray) {
+		MainModel.stockArray = stockArray;
+	}
+
 	public MainModel(){
 	}
 

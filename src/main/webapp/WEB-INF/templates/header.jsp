@@ -6,6 +6,16 @@
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.8.2/angular-material.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+
+<!-- Google Charts -->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script> 
+
+<!-- Internal Chart.JS file -->
+<script src="Chart.js-master/Chart.js"></script>
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -60,6 +70,10 @@
 		<!-- Contact Us Link -->
 		<td width="25%">
 			<span class="menu"><a style="color:white" href="/Contact">Contact Us</a><span>
+		</td>
+		<!-- Intialize Link -->
+		<td width="25%">
+			<span class="menu"><a style="color:white" href="/intialize">Intialize</a><span>
 		</td>
 	</tr>
 	</table>
